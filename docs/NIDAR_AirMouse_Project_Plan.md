@@ -118,7 +118,30 @@ nidar_airmouse_ws/
 
 ---
 
-## 4. Phase-by-Phase Plan
+## 4. Realistic Timeline & MVP Cutline
+
+**Honest basis for these numbers**: Day 1 (today) took a full working day and produced roughly 20-25% of total scope — almost entirely infrastructure. That's not a pace problem; PX4+ROS2+Gazebo integration genuinely fights back at every new integration point (8+ distinct root causes today, several taking hours each). These estimates assume that pace continues, not an optimistic best case.
+
+| Phase | Optimistic | Realistic | Priority |
+|---|---|---|---|
+| 1 — Lidar | 2-3 hrs | half a day | 🟢 **MVP** |
+| 2 — SLAM | 2-4 hrs | half a day | 🟢 **MVP** |
+| 3 — GPS-denied EKF2 | 4-6 hrs | **1-2 days** — one of PX4's fussier subsystems | 🟡 **Stretch — cut first if time runs short** |
+| 4 — Nav2 + offboard bridge | 4-8 hrs | **1-2 days** — offboard mode needs continuous setpoint streaming, drops out non-obviously if timing's off | 🟢 **MVP** |
+| 5 — Survivor detection | 4-6 hrs | ~1 day (parallelizable) | 🟢 **MVP** (simplified version) |
+| 6 — Mission FSM | 4-6 hrs | ~1 day, only after 3+4 work | 🟢 **MVP** (basic sequencer) |
+| 7 — GCS dashboard | 2-4 hrs | half a day | 🟡 **Stretch — cut second if time runs short** |
+
+**Totals**: ~6-9 full days solo at today's pace; ~5-7 days if Phase 5 runs in parallel with a teammate starting once Phase 2 is done.
+
+### If the deadline gets tight, cut in this order:
+1. **First cut**: Phase 3 (true GPS-denial). Fall back to demonstrating the SLAM map as evidence of GPS-independent localization capability, while GPS stays nominally active as a safety net. Document this clearly as a known limitation rather than hiding it.
+2. **Second cut**: Phase 7 (polished GCS). A working RViz2 view with map + camera + markers, even unpolished, satisfies the brief's spirit — a custom dashboard is nice-to-have, not required.
+3. **Never cut**: Phases 1, 2, 4, 5, 6 in some working form — these are what make it "an autonomous mission that found survivors," which is the core of the brief. A working demo missing one requirement beats an unfinished attempt at all of them.
+
+---
+
+## 5. Phase-by-Phase Plan
 
 ### Phase 0 — Foundation ✅ DONE
 - PX4 + Gazebo Harmonic, x500 airframe, custom arena, all sensors verified, ROS2 bridge confirmed, manual flight proven via QGroundControl.
@@ -218,7 +241,7 @@ nidar_airmouse_ws/
 
 ---
 
-## 5. Suggested Order & Parallelization
+## 6. Suggested Order & Parallelization
 
 ```mermaid
 gantt
@@ -239,7 +262,7 @@ Phase 5 only needs Phase 2's map to exist for grid-tagging context — it doesn'
 
 ---
 
-## 6. Ongoing Discipline
+## 7. Ongoing Discipline
 
 - **One commit per completed sub-step**, not one giant commit per phase — makes it possible to find exactly where something broke.
 - **Every new capability gets a flight-test log** saved to `docs/flight_test_logs/` (the `.ulg` files PX4 already generates) — this becomes evidence for the judges that the system was actually tested, not just theoretically built.

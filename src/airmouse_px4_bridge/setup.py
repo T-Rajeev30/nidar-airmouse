@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'px4_odom_bridge = airmouse_px4_bridge.px4_odom_bridge:main',
+            'vision_odom_bridge = airmouse_px4_bridge.vision_odom_bridge:main',
         ],
     },
 )

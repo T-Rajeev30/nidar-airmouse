@@ -177,8 +177,16 @@ nidar_airmouse_ws/
 
 ---
 
-### Phase 3 — GPS-Denied Operation
+### Phase 3 — GPS-Denied Operation ⚠️ PARTIAL (time-boxed 2026-09-06)
 **Goal**: stop relying on GPS, matching the real mission constraint.
+
+**Status: position fusion genuinely working, yaw does not yet converge.**
+GPS fully disabled (`EKF2_GPS_CTRL=0`), position/height fused from SLAM
+via `vision_odom_bridge` - confirmed via `estimator_status` showing
+`pos_test_ratio` well under threshold. Yaw fusion fails to converge
+(see code docstring for full diagnosis). Time-boxed per the MVP cutline
+below; revisit if time allows, otherwise ship with this known limitation
+documented.
 
 | Step | File(s) touched |
 |---|---|

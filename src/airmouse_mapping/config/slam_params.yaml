@@ -1,0 +1,12 @@
+slam_toolbox:
+  ros__parameters:
+    odom_frame: simple_drone/odom
+    map_frame: map
+    base_frame: simple_drone/base_link
+    scan_topic: /simple_drone/scan
+    mode: mapping
+    resolution: 0.05
+    max_laser_range: 15.0
+    minimum_travel_distance: 0.1
+    minimum_travel_heading: 0.1
+    transform_publish_period: 0.05

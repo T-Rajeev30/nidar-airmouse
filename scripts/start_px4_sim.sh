@@ -3,8 +3,8 @@
 # Run this FIRST, wait ~25s for it to fully connect, THEN run:
 #   ros2 launch airmouse_mapping slam_stack.launch.py
 
-pkill -9 -f px4 2>/dev/null
-pkill -9 -f MicroXRCEAgent 2>/dev/null
+pkill -9 -f "bin/px4" 2>/dev/null
+pkill -9 -f "MicroXRCEAgent" 2>/dev/null
 pkill -9 -f "gz sim" 2>/dev/null
 sleep 3
 

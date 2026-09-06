@@ -61,6 +61,8 @@ sequenceDiagram
 | SLAM dropping every scan: "timestamp earlier than transform cache" | Sim-time vs wall-clock mismatch (see above) | Bridged `/clock`, added `use_sim_time` everywhere |
 | SLAM dropping scans: "queue full" (after partial sim_time fix) | Static tf publisher was started *before* the sim_time fix, still on wall clock | Killed and restarted with `use_sim_time:=true` |
 | Lidar frame `'link'` had no path to `base_link` | No transform existed between the lidar's own sensor frame and the drone body | Added static transform matching the exact mount offset from `x500_lidar_2d`'s own model.sdf |
+| `start_px4_sim.sh` killed itself instantly on every run | `pkill -9 -f px4` matched the substring "px4" in the script's **own filename**, not just the target process | Changed pattern to `-f "bin/px4"` — specific enough to match only the actual compiled binary |
+| SLAM kept dropping messages even after every other fix | Repeated manual terminal restarts had left duplicate clock/lidar/tf bridge processes running simultaneously, publishing slightly out of phase with each other | Wrote `full_test.sh` — one script that kills everything, **verifies** a genuinely empty process list before proceeding, then brings the whole stack up in order with no manual terminal juggling |
 
 ---
 
@@ -70,6 +72,14 @@ sequenceDiagram
 - `airmouse_mapping/config/slam_params.yaml` — updated frame/topic names for the new stack, added `use_sim_time: true`
 - `airmouse_mapping/launch/slam_stack.launch.py` (new) — one-command bringup of the entire ROS2-side pipeline (clock bridge, lidar bridge, odom bridge, static tf, SLAM)
 - `scripts/start_px4_sim.sh` (new) — starts the agent + PX4 SITL, the one piece that lives outside ROS2's launch system
+- `scripts/full_test.sh` (new) — the final, reliable entry point: tears down everything, **verifies** a clean process slate, then brings up the entire stack (sim → SLAM → map) in one command with a clear SUCCESS/FAILED result. This is now the actual way to start Phase 2, not the individual pieces above.
+
+## Confirmed working, end to end
+
+```
+~/nidar_airmouse_ws/scripts/full_test.sh
+```
+runs the complete teardown → clean-slate check → sim startup → SLAM launch → `/map` verification sequence unattended, and reliably ends in a real `OccupancyGrid` with live data. This is the reproducible foundation everything from Phase 3 onward builds on.
 
 ---
 

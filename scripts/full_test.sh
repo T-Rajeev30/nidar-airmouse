@@ -6,6 +6,7 @@ pkill -9 -f "MicroXRCEAgent" 2>/dev/null
 pkill -9 -f "gz sim" 2>/dev/null
 pkill -9 -f "parameter_bridge" 2>/dev/null
 pkill -9 -f "px4_odom_bridge" 2>/dev/null
+pkill -9 -f "vision_odom_bridge" 2>/dev/null
 pkill -9 -f "static_transform_publisher" 2>/dev/null
 pkill -9 -f "slam_toolbox" 2>/dev/null
 sleep 3

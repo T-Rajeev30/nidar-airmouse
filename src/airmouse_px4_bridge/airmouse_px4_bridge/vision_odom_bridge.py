@@ -10,19 +10,6 @@ converts in either direction.
 KNOWN SIMPLIFICATION: publishes position + yaw only, no velocity -
 EKF2_EV_CTRL is configured to match (bits 0,1,3, not bit 2).
 
-KNOWN LIMITATION (Phase 3, 2026-09-06): position fusion is confirmed
-working correctly with GPS fully disabled (EKF2_GPS_CTRL=0) - verified
-via estimator_status showing pos_test_ratio well under the 1.0 pass
-threshold. Yaw fusion does NOT yet converge cleanly: SLAM's map frame
-establishes its own zero-yaw reference independent of magnetic north,
-and switching EKF2_EV_CTRL's yaw bit on a PX4 instance that has already
-locked onto a mag-based heading (from earlier flight testing) does not
-reliably force convergence - confirmed via a sustained ~106 degree
-disagreement in hdg_test_ratio/pre_flt_fail_innov_heading even after
-PX4's own yaw-reset logic fired once. Likely fix: bring up vision
-fusion from PX4's first boot, before any mag-based heading lock is
-established, rather than switching it on live mid-session - not yet
-implemented. Time-boxed as a known limitation; revisit if time allows.
 """
 
 import rclpy

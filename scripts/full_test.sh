@@ -38,12 +38,21 @@ if ! grep -q "vehicle_odometry data writer" /tmp/px4.log; then
 fi
 echo "Connected."
 
+echo "=== STEP 3b: Applying GPS-denied EKF2 config ==="
+~/PX4-Autopilot/build/px4_sitl_default/bin/px4-param set EKF2_HGT_REF 0
+~/PX4-Autopilot/build/px4_sitl_default/bin/px4-param set EKF2_EV_CTRL 11
+~/PX4-Autopilot/build/px4_sitl_default/bin/px4-param set EKF2_GPS_CTRL 0
+echo "EKF2 configured for vision-only operation."
+
 echo "=== STEP 4: Starting SLAM pipeline ==="
 source /opt/ros/humble/setup.bash
 source ~/nidar_airmouse_ws/install/setup.bash
 nohup ros2 launch airmouse_mapping slam_stack.launch.py > /tmp/slam_full.log 2>&1 &
 
-echo "Waiting 20s for SLAM to settle..."
+echo "=== STEP 4b: Starting vision odometry bridge ==="
+nohup ros2 run airmouse_px4_bridge vision_odom_bridge --ros-args -p use_sim_time:=true > /tmp/vision_bridge.log 2>&1 &
+
+echo "Waiting 20s for SLAM + vision to settle..."
 sleep 20
 
 echo "=== STEP 5: Checking /map ==="

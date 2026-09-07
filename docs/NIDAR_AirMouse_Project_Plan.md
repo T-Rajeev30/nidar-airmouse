@@ -135,7 +135,7 @@ nidar_airmouse_ws/
 **Totals**: ~6-9 full days solo at today's pace; ~5-7 days if Phase 5 runs in parallel with a teammate starting once Phase 2 is done.
 
 ### If the deadline gets tight, cut in this order:
-1. **First cut**: Phase 3 (true GPS-denial). Fall back to demonstrating the SLAM map as evidence of GPS-independent localization capability, while GPS stays nominally active as a safety net. Document this clearly as a known limitation rather than hiding it.
+1. **First cut**: none needed — Phase 3 completed successfully. If a future stretch-cut is needed elsewhere, GCS polish (Phase 7) remains the safest thing to trim.
 2. **Second cut**: Phase 7 (polished GCS). A working RViz2 view with map + camera + markers, even unpolished, satisfies the brief's spirit — a custom dashboard is nice-to-have, not required.
 3. **Never cut**: Phases 1, 2, 4, 5, 6 in some working form — these are what make it "an autonomous mission that found survivors," which is the core of the brief. A working demo missing one requirement beats an unfinished attempt at all of them.
 
@@ -177,16 +177,10 @@ nidar_airmouse_ws/
 
 ---
 
-### Phase 3 — GPS-Denied Operation ⚠️ PARTIAL (time-boxed 2026-09-06)
+### Phase 3 — GPS-Denied Operation ✅ DONE
 **Goal**: stop relying on GPS, matching the real mission constraint.
 
-**Status: position fusion genuinely working, yaw does not yet converge.**
-GPS fully disabled (`EKF2_GPS_CTRL=0`), position/height fused from SLAM
-via `vision_odom_bridge` - confirmed via `estimator_status` showing
-`pos_test_ratio` well under threshold. Yaw fusion fails to converge
-(see code docstring for full diagnosis). Time-boxed per the MVP cutline
-below; revisit if time allows, otherwise ship with this known limitation
-documented.
+**Genuinely complete.** GPS fully disabled (`EKF2_GPS_CTRL=0`), height reference moved to barometer (`EKF2_HGT_REF=0`), and position + yaw + height all confirmed fusing from SLAM-derived vision odometry (`EKF2_EV_CTRL=11`) — verified via `estimator_status` showing `hdg_test_ratio` and `pos_test_ratio` both near zero, all `pre_flt_fail_innov_*` flags `False`. Root cause of an earlier apparent "yaw won't converge" issue was a duplicate `vision_odom_bridge` process silently corrupting the DDS data path — not an architectural yaw problem as first suspected. Fixed by ensuring exactly one instance runs (now enforced in `full_test.sh`'s cleanup step).
 
 | Step | File(s) touched |
 |---|---|
